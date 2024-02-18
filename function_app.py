@@ -28,12 +28,18 @@ def xml_validate(myblob: func.InputStream):
    # default_credential = DefaultAzureCredential()
     blob_service_client = BlobServiceClient.from_connection_string(connection_string)
     container_client = blob_service_client.get_container_client(container_name)
-    for blob in container_client.list_blob_names():
-        logging.info(f"Found {blob}")
+    for blob in container_client.list_blobs():
+        logging.info(f"Found {blob.name}")
 
-
-    # old_blob = blob_service.get_blob_client(container_name, f"{path_in}/{file_name}")
-    # new_blob = blob_service.get_blob_client(container_name, f"{path_out}/{file_name}")
-    # new_blob.start_copy_from_url(old_blob.url)
+    # blob_client = container_client.get_blob_client(f"{path_out}/{file_name}")
+    # blob_client.start_copy_from_url(f"{account_url}/{container_name}/{path_out}/{file_name}", requires_sync = True )
+    
+    # old_blob = blob_service_client.get_blob_client(container_name, f"{path_in}/{file_name}")
+    new_blob = blob_service_client.get_blob_client(container_name, f"{path_out}/{file_name}")
+    theData = myblob.read()
+    new_blob.upload_blob(theData)
     # old_blob.delete_blob()
+    for blob in container_client.list_blobs():
+        logging.info(f"Found {blob.name}")
+
     logging.info(f"Moved {file_name} from {path_in} to {path_out}")
